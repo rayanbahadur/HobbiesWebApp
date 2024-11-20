@@ -15,11 +15,17 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from . import views
 
 from .views import main_spa
 
 urlpatterns = [
-    path('', main_spa),
+    path('signup/', views.signup_view, name='signup'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
+    path('', login_required(main_spa), name='main_spa'),
 ]

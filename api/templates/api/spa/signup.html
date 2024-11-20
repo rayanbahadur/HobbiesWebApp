@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <h1>Sign Up</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.name.label_tag }} {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+        <div>
+            {{ form.email.label_tag }} {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+        <div>
+            {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
+            {{ form.date_of_birth.errors }}
+        </div>
+        <div>
+            {{ form.password1.label_tag }} {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+        <div>
+            {{ form.password2.label_tag }} {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+        <div>
+            {{ form.hobbies }}
+            {{ form.hobbies.errors }}
+        </div>
+        <label for="new_hobby">Add Hobbies:</label>
+        <input type="text" id="new_hobby" name="new_hobby">
+        <button type="submit">Sign Up</button>
+    </form>
+</body>
+</html>
