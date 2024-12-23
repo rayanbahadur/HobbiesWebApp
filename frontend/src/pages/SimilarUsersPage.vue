@@ -3,9 +3,10 @@
     <h1>Users with Similar Hobbies</h1>
     <div>
       <label>Age Min:</label>
-      <input type="number" v-model="ageMin" @change="updateFilter" />
+      <input type="number" v-model="ageMin" />
       <label>Age Max:</label>
-      <input type="number" v-model="ageMax" @change="updateFilter" />
+      <input type="number" v-model="ageMax" />
+      <button @click="applyFilters">Filter</button>
     </div>
     <ul>
       <li v-for="user in users" :key="user.email">
@@ -19,8 +20,11 @@
   </div>
 </template>
 
+
+
+
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import { useUserStore } from '../store/userStore';
 
 interface User {
@@ -33,11 +37,12 @@ interface User {
 export default defineComponent({
   setup() {
     const userStore = useUserStore();
+    const users = ref<User[]>([]); // Local reactive variable for users
     const ageMin = ref<number | null>(null);
     const ageMax = ref<number | null>(null);
 
-    const updateFilter = () => {
-      userStore.setAgeFilter(ageMin.value, ageMax.value);
+    const applyFilters = () => {
+      userStore.setAgeFilter(ageMin.value, ageMax.value); // Apply filters in the store
     };
 
     const prevPage = () => {
@@ -52,23 +57,31 @@ export default defineComponent({
       }
     };
 
-    // Add this to debug user data when the component is mounted
+    // Sync the reactive store state with the local `users` ref
+    watch(
+      () => userStore.users,
+      (newUsers: User[]) => {
+        users.value = newUsers; // Update reactive `users`
+        console.log('Users updated in component:', newUsers);
+      },
+      { immediate: true } // Trigger immediately on mount
+    );
+
     onMounted(() => {
-      userStore.fetchUsers().then(() => {
-        console.log('Users:', userStore.users); // Debugging the users
-      });
+      userStore.fetchUsers(); // Fetch users on page load
     });
 
     return {
-      users: userStore.users as User[],
+      users,
       page: userStore.page,
       numPages: userStore.numPages,
       ageMin,
       ageMax,
-      updateFilter,
+      applyFilters,
       prevPage,
       nextPage,
     };
   },
 });
+
 </script>

@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "../pages/MainPage.vue";
 import OtherPage from "../pages/OtherPage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
+import { useUserStore } from '../store/userStore';
 
 let base =
   import.meta.env.MODE == "development" ? import.meta.env.BASE_URL : "";
@@ -16,7 +17,15 @@ const router = createRouter({
   routes: [
     { path: "/", name: "Main Page", component: MainPage },
     { path: "/other/", name: "Other Page", component: OtherPage },
-    { path: "/similar-users/", name: "Similar Users", component: SimilarUsersPage },
+    {
+      path: "/similar-users/",
+      name: "Similar Users",
+      component: SimilarUsersPage,
+      beforeEnter: () => {
+        const userStore = useUserStore();
+        return userStore.fetchUsers(); // Ensure users are fetched before entering the route
+      },
+    },
   ],
 });
 

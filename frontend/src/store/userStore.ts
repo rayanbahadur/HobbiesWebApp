@@ -16,8 +16,10 @@ export const useUserStore = defineStore('userStore', {
         page: this.page.toString(),
       });
 
+      console.log('Fetching users with params:', params.toString()); // Debugging log
       const response = await fetch(`/api/similar/?${params.toString()}`);
       const data = await response.json();
+      console.log('Fetched users:', data); // Debugging log
       this.users = data.users;
       this.numPages = data.num_pages;
     },
