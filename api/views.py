@@ -1,9 +1,14 @@
-from django.http import HttpResponse, HttpRequest, JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from .forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm, HobbyForm
+from datetime import timedelta
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Hobby
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.http import JsonResponse, HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
+from django.utils.timezone import now
+from .forms import UserCreationForm, UserChangeForm, HobbyForm
+from .models import User
 
 def signup_view(request):
     if request.method == 'POST':
@@ -66,3 +71,59 @@ def profile_view(request):
 @login_required
 def main_spa(request: HttpRequest) -> HttpResponse:
     return render(request, 'api/spa/index.html', {})
+
+@login_required
+def similar_view(request):
+    # Get query parameters
+    age_min = request.GET.get('age_min', None)
+    age_max = request.GET.get('age_max', None)
+    page_number = request.GET.get('page', 1)
+
+    # Start with all users annotated with common hobbies
+    users = User.objects.annotate(
+        common_hobbies=Count('hobbies')
+    ).exclude(id=request.user.id)  # Exclude the currently logged-in user
+    users = users.order_by('-common_hobbies')
+
+    # Convert age range to date_of_birth range
+    if age_min or age_max:
+        today = now().date()
+
+        if age_min:
+            min_date_of_birth = today - timedelta(days=int(age_min) * 365.25)
+        else:
+            min_date_of_birth = None  # No lower limit
+
+        if age_max:
+            max_date_of_birth = today - timedelta(days=int(age_max) * 365.25)
+        else:
+            max_date_of_birth = None  # No upper limit
+
+        # Apply the date_of_birth filter
+        if min_date_of_birth and max_date_of_birth:
+            users = users.filter(date_of_birth__range=[max_date_of_birth, min_date_of_birth])
+        elif min_date_of_birth:
+            users = users.filter(date_of_birth__lte=min_date_of_birth)
+        elif max_date_of_birth:
+            users = users.filter(date_of_birth__gte=max_date_of_birth)
+
+    # Paginate the results
+    paginator = Paginator(users, 10)
+    page_obj = paginator.get_page(page_number)
+
+    # Prepare the data for JSON response
+    users_data = [
+        {
+            'name': user.name,
+            'email': user.email,
+            'date_of_birth': user.date_of_birth,
+            'common_hobbies': user.common_hobbies,
+        }
+        for user in page_obj
+    ]
+
+    return JsonResponse({
+        'users': users_data,
+        'page': page_number,
+        'num_pages': paginator.num_pages,
+    })
