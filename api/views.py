@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
@@ -81,9 +81,11 @@ def similar_view(request):
 
     # Start with all users annotated with common hobbies
     users = User.objects.annotate(
-        common_hobbies=Count('hobbies')
+        common_hobbies=Count('hobbies', filter=Q(hobbies__in=request.user.hobbies.all()))
     ).exclude(id=request.user.id)  # Exclude the currently logged-in user
-    users = users.order_by('-common_hobbies')
+
+    # Exclude users with 0 common hobbies
+    users = users.filter(common_hobbies__gt=0).order_by('-common_hobbies')
 
     # Convert age range to date_of_birth range
     if age_min or age_max:
