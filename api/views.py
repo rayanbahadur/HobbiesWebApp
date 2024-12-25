@@ -1,7 +1,8 @@
-from django.http import HttpResponse, HttpRequest, JsonResponse
+from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from .forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm, HobbyForm
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Hobby
 
@@ -27,12 +28,16 @@ def signup_view(request):
     return render(request, 'api/spa/signup.html', {'form': form})
 
 def login_view(request):
+    form = AuthenticationForm()
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        email = request.POST["email"]
+        password = request.POST["password"]
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
             login(request, user)
             return redirect('main_spa')
+        else:
+            messages.error(request, "Invalid email or password.")
     else:
         form = AuthenticationForm()
     return render(request, 'api/spa/login.html', {'form': form})
