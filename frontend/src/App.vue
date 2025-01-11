@@ -3,14 +3,13 @@
     <nav class="navbar navbar-inverse">
       <ul class="nav navbar-nav" style="flex-direction: row; gap: 2em">
         <li class="nav-item">
-          <router-link class="nav-link" :to="{ name: 'Main Page' }"
-            >Main Page</router-link
-          >
+          <router-link class="nav-link" :to="{ name: 'Main Page' }">Main Page</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" :to="{ name: 'Other Page' }"
-            >Other Page</router-link
-          >
+          <router-link class="nav-link" :to="{ name: 'Other Page' }">Other Page</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" :to="{ name: 'Similar Users' }">Similar Users</router-link>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
