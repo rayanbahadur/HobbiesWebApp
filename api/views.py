@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -87,6 +87,14 @@ def similar_view(request):
     age_max = request.GET.get('age_max', None)
     page_number = request.GET.get('page', 1)
 
+    # Helper function to calculate age from date of birth
+    def calculate_age(date_of_birth):
+        if not date_of_birth:
+            return None
+        today = datetime.today().date()
+        delta = today - date_of_birth
+        return int(delta.days / 365.25)
+
     # Start with all users annotated with common hobbies
     users = User.objects.annotate(
         common_hobbies=Count('hobbies', filter=Q(hobbies__in=request.user.hobbies.all()))
@@ -95,27 +103,19 @@ def similar_view(request):
     # Exclude users with 0 common hobbies
     users = users.filter(common_hobbies__gt=0).order_by('-common_hobbies')
 
-    # Convert age range to date_of_birth range
+    # Convert age range to filtering logic
     if age_min or age_max:
-        today = now().date()
-
-        if age_min:
-            min_date_of_birth = today - timedelta(days=int(age_min) * 365.25)
-        else:
-            min_date_of_birth = None  # No lower limit
-
-        if age_max:
-            max_date_of_birth = today - timedelta(days=int(age_max) * 365.25)
-        else:
-            max_date_of_birth = None  # No upper limit
-
-        # Apply the date_of_birth filter
-        if min_date_of_birth and max_date_of_birth:
-            users = users.filter(date_of_birth__range=[max_date_of_birth, min_date_of_birth])
-        elif min_date_of_birth:
-            users = users.filter(date_of_birth__lte=min_date_of_birth)
-        elif max_date_of_birth:
-            users = users.filter(date_of_birth__gte=max_date_of_birth)
+        filtered_users = []
+        for user in users:
+            user_age = calculate_age(user.date_of_birth)
+            if user_age is None:
+                continue
+            if age_min and user_age < int(age_min):
+                continue
+            if age_max and user_age > int(age_max):
+                continue
+            filtered_users.append(user)
+        users = filtered_users  # Replace users with filtered list
 
     # Paginate the results
     paginator = Paginator(users, 10)
