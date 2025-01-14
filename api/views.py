@@ -54,27 +54,38 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+# @login_required
+# def profile_view(request):
+#     if request.method == 'POST':
+#         user_form = UserChangeForm(request.POST, instance=request.user)
+#         hobby_form = HobbyForm(request.POST)
+
+#         if user_form.is_valid():
+#             user_form.save()
+#             return redirect('profile')
+        
+#         if hobby_form.is_valid():
+#             hobby = hobby_form.save()
+#             request.user.hobbies.add(hobby)
+#             return redirect('profile')
+#     else:
+#         user_form = UserChangeForm(instance=request.user)
+#         hobby_form = HobbyForm()
+#     return render(
+#         request,
+#         'profile.html',
+#         {'user_form': user_form, 'hobby_form': hobby_form})
+
 @login_required
 def profile_view(request):
-    if request.method == 'POST':
-        user_form = UserChangeForm(request.POST, instance=request.user)
-        hobby_form = HobbyForm(request.POST)
-
-        if user_form.is_valid():
-            user_form.save()
-            return redirect('profile')
-        
-        if hobby_form.is_valid():
-            hobby = hobby_form.save()
-            request.user.hobbies.add(hobby)
-            return redirect('profile')
-    else:
-        user_form = UserChangeForm(instance=request.user)
-        hobby_form = HobbyForm()
-    return render(
-        request,
-        'profile.html',
-        {'user_form': user_form, 'hobby_form': hobby_form})
+    user = request.user
+    user_data = {
+        'name': user.name,
+        'email': user.email,
+        'date_of_birth': user.date_of_birth,
+        'hobbies': list(user.hobbies.values('id', 'name')),
+    }
+    return JsonResponse(user_data)
 
 @login_required
 def main_spa(request: HttpRequest) -> HttpResponse:
