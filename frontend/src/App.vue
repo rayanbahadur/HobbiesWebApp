@@ -6,7 +6,7 @@
           <router-link class="nav-link" :to="{ name: 'Main Page' }">Main Page</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" :to="{ name: 'Other Page' }">Other Page</router-link>
+          <router-link class="nav-link" :to="{ name: 'Profile Page' }">Profile Page</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" :to="{ name: 'Similar Users' }">Similar Users</router-link>
