@@ -22,6 +22,7 @@ from . import views
 
 from .views import main_spa
 
+## TODO, any access to pages after login should be protected by login_required
 urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
