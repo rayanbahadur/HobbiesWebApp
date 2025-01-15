@@ -19,12 +19,12 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            user.save()
             new_hobbies = request.POST.get('new_hobby')
             if new_hobbies:
                 hobby_names = [hobby.strip() for hobby in new_hobbies.split(',')]
                 for hobby_name in hobby_names:
                     hobby, created = Hobby.objects.get_or_create(name=hobby_name)
-                    user.save()
                     user.hobbies.add(hobby)
             else:
                 user.save()
