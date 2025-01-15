@@ -59,5 +59,20 @@ export const useUserStoreProfile = defineStore('userStoreProfile', {
       const data: User = await response.json();
       this.user = data;
     },
+    async updateProfile(updatedUser: User) {
+      const response = await fetch('/api/profile/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
+      if (response.ok) {
+        this.user = await response.json();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.errors);
+      }
+    },
   },
 });
