@@ -2,7 +2,7 @@
 
 import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "../pages/MainPage.vue";
-import OtherPage from "../pages/OtherPage.vue";
+import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
 import { useUserStore } from '../store/userStore';
 
@@ -16,7 +16,7 @@ const router = createRouter({
   history: createWebHistory(base),
   routes: [
     { path: "/", name: "Main Page", component: MainPage },
-    { path: "/other/", name: "Other Page", component: OtherPage },
+    { path: "/profile/", name: "Profile Page", component: ProfilePage },
     {
       path: "/similar-users/",
       name: "Similar Users",

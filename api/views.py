@@ -12,7 +12,7 @@ from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from .forms import UserCreationForm, UserChangeForm, HobbyForm
-from .models import User
+from .models import User, Hobby
 
 def signup_view(request):
     if request.method == 'POST':
