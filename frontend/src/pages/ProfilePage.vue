@@ -1,36 +1,36 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <h1 class="mb-4">Profile Page</h1>
     <div v-if="user">
       <form @submit.prevent="saveProfile">
         <div class="form-group">
-          <label for="name" class="font-weight-bold">Name:</label>
+          <label for="name" class="form-label custom-label">Name:</label>
           <input type="text" id="name" class="form-control" v-model="name" />
         </div>
         <div class="form-group">
-          <label for="email" class="font-weight-bold">Email:</label>
+          <label for="email" class="form-label custom-label">Email:</label>
           <input type="email" id="email" class="form-control" v-model="email" />
         </div>
         <div class="form-group">
-          <label for="date_of_birth" class="font-weight-bold">Date of Birth:</label>
+          <label for="date_of_birth" class="form-label custom-label">Date of Birth:</label>
           <input type="date" id="date_of_birth" class="form-control" v-model="date_of_birth" />
         </div>
         <div class="form-group">
-          <label for="newPassword1" class="font-weight-bold">New Password:</label>
+          <label for="newPassword1" class="form-label custom-label">New Password:</label>
           <input type="password" id="newPassword1" class="form-control" v-model="newPassword1" autocomplete="new-password" />
         </div>
         <div class="form-group">
-          <label for="newPassword2" class="font-weight-bold">Confirm New Password:</label>
+          <label for="newPassword2" class="form-label custom-label">Confirm New Password:</label>
           <input type="password" id="newPassword2" class="form-control" v-model="newPassword2" autocomplete="new-password" />
         </div>
         <div class="form-group">
-          <label class="font-weight-bold">Hobbies:</label>
+          <label class="form-label custom-label">Hobbies:</label>
           <div v-for="hobby in allHobbies" :key="hobby.id" class="form-check">
             <input type="checkbox" :value="hobby.id" class="form-check-input" v-model="selectedHobbies" />
             <label class="form-check-label">{{ hobby.name }}</label>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-success mt-3">Save</button>
       </form>
       <div v-if="errorMessage" class="alert alert-danger mt-3">
         {{ errorMessage }}
@@ -159,3 +159,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.custom-label {
+  font-size: 1.25rem; /* Larger font size */
+  font-weight: bold; /* Bold text */
+}
+</style>
