@@ -95,7 +95,7 @@ export default defineComponent({
           });
           if (response.ok) {
             alert('Profile updated successfully');
-            await userStore.fetchProfile(); // Fetch the updated profile
+            window.location.reload(); // Refresh the page after alert
           } else {
             const errorData = await response.json();
             alert('Error updating profile: ' + JSON.stringify(errorData));
