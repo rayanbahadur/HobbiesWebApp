@@ -1,7 +1,9 @@
 from django import forms
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from .models import User, Hobby
+
 
 class UserCreationForm(UserCreationForm):
     date_of_birth = forms.DateField(
@@ -55,8 +57,15 @@ class UserChangeForm(BaseUserChangeForm):
         return user
 
 class CustomPasswordChangeForm(forms.Form):
-    new_password1 = forms.CharField(label="New password", widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+    new_password1 = forms.CharField(
+        label="New password",
+        widget=forms.PasswordInput,
+        validators=[validate_password]
+    )
+    new_password2 = forms.CharField(
+        label="New password confirmation",
+        widget=forms.PasswordInput
+    )
 
     def clean(self):
         cleaned_data = super().clean()
