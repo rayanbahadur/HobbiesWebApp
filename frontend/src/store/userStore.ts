@@ -57,6 +57,7 @@ export const useUserStoreProfile = defineStore('userStoreProfile', {
     async fetchProfile() {
       const response = await fetch('/api/profile/');
       const data: User = await response.json();
+      console.log('Fetched user profile:', data);
       this.user = data;
     },
     async updateProfile(updatedUser: User) {
