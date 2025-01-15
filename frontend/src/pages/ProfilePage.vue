@@ -17,11 +17,11 @@
         </div>
         <div>
           <label>New Password:</label>
-          <input type="password" v-model="newPassword1" />
+          <input type="password" v-model="newPassword1" autocomplete="new-password" />
         </div>
         <div>
           <label>Confirm New Password:</label>
-          <input type="password" v-model="newPassword2" />
+          <input type="password" v-model="newPassword2" autocomplete="new-password" />
         </div>
         <div>
           <label>Hobbies:</label>
