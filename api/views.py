@@ -20,15 +20,17 @@ def signup_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
+
             new_hobbies = request.POST.get('new_hobby')
             if new_hobbies:
                 hobby_names = [hobby.strip() for hobby in new_hobbies.split(',')]
                 for hobby_name in hobby_names:
                     hobby, created = Hobby.objects.get_or_create(name=hobby_name)
                     user.hobbies.add(hobby)
-            else:
-                user.save()
-            form.save_m2m()
+
+            existing_hobbies = form.cleaned_data.get('hobbies', [])
+            user.hobbies.add(*existing_hobbies)  # Combine both new and selected hobbies
+            
             login(request, user)
             return redirect('main_spa')
     else:
