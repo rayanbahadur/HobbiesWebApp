@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from .models import User, Hobby
 
 class UserCreationForm(UserCreationForm):
@@ -32,7 +33,7 @@ class AuthenticationForm(AuthenticationForm):
         model = User
         fields = ('email', 'password')
 
-class UserChangeForm(UserChangeForm):
+class UserChangeForm(BaseUserChangeForm):
     password = None
     class Meta:
         model = User
@@ -40,21 +41,37 @@ class UserChangeForm(UserChangeForm):
 
     hobbies = forms.ModelMultipleChoiceField(
         queryset=Hobby.objects.all(),
-        required=True,
+        required=False,
         widget=forms.CheckboxSelectMultiple,
         label="Hobbies"
-        )
+    )
+
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
             user.save()
-            self.cleaned_data['hobbies'] and user.hobbies.set(self.cleaned_data['hobbies'])
+            if 'hobbies' in self.cleaned_data:
+                user.hobbies.set(self.cleaned_data['hobbies'])
         return user
 
-class PasswordChangeForm(PasswordChangeForm):
-    class Meta:
-        model = User
-        fields = ('old_password', 'new_password1', 'new_password2')
+class CustomPasswordChangeForm(forms.Form):
+    new_password1 = forms.CharField(label="New password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation", widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get("new_password1")
+        new_password2 = cleaned_data.get("new_password2")
+
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise forms.ValidationError("The two password fields didn't match.")
+
+        return cleaned_data
+
+    def save(self, user):
+        user.set_password(self.cleaned_data["new_password1"])
+        user.save()
+        return user
 
 class HobbyForm(forms.ModelForm):
     class Meta:

@@ -1,5 +1,18 @@
 import { defineStore } from 'pinia';
 
+interface Hobby {
+  id: number;
+  name: string;
+}
+
+interface User {
+  name: string;
+  email: string;
+  date_of_birth: string;
+  hobbies: Hobby[];
+}
+
+
 export const useUserStore = defineStore('userStore', {
   state: () => ({
     users: [],
@@ -32,6 +45,35 @@ export const useUserStore = defineStore('userStore', {
     setPage(page: number) {
       this.page = page;
       this.fetchUsers();
+    },
+  },
+});
+
+export const useUserStoreProfile = defineStore('userStoreProfile', {
+  state: () => ({
+    user: null as User | null,
+  }),
+  actions: {
+    async fetchProfile() {
+      const response = await fetch('/api/profile/');
+      const data: User = await response.json();
+      console.log('Fetched user profile:', data);
+      this.user = data;
+    },
+    async updateProfile(updatedUser: User) {
+      const response = await fetch('/api/profile/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
+      if (response.ok) {
+        this.user = await response.json();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.errors);
+      }
     },
   },
 });

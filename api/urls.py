@@ -22,11 +22,13 @@ from . import views
 
 from .views import main_spa
 
+## TODO, any access to pages after login should be protected by login_required
 urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('similar/', views.similar_view, name='similar'),
-    path('profile/', login_required(views.profile_view), name='profile'),
+    path('profile/', views.profile_view, name='profile'),
+    path('hobbies/', views.hobbies_view, name='hobbies'),
     path('', login_required(main_spa), name='main_spa'),
 ]

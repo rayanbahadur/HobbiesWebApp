@@ -1,17 +1,18 @@
 from datetime import timedelta, datetime
-from django.http import HttpResponse, HttpRequest
+from django.http import JsonResponse, HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from .forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm, HobbyForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
-from .forms import UserCreationForm, UserChangeForm, HobbyForm
+from .forms import UserCreationForm, UserChangeForm, CustomPasswordChangeForm
 from .models import User, Hobby
 
 def signup_view(request):
@@ -57,26 +58,45 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
-def profile_view(request):
-    if request.method == 'POST':
-        user_form = UserChangeForm(request.POST, instance=request.user)
-        hobby_form = HobbyForm(request.POST)
-
-        if user_form.is_valid():
-            user_form.save()
-            return redirect('profile')
+@require_http_methods(["GET", "POST"])
+def profile_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    if request.method == "POST":
+        data = request.POST.copy()
+        for field in ['name', 'email', 'date_of_birth']:
+            if field not in data:
+                data[field] = getattr(user, field)
+        hobbies = request.POST.getlist('hobbies')
+        if hobbies:
+            data.setlist('hobbies', hobbies)
+        else:
+            data.setlist('hobbies', list(user.hobbies.values_list('id', flat=True)))
         
-        if hobby_form.is_valid():
-            hobby = hobby_form.save()
-            request.user.hobbies.add(hobby)
-            return redirect('profile')
+        form = UserChangeForm(data, instance=user)
+        password_form = CustomPasswordChangeForm(data)
+        
+        if form.is_valid() and (not data.get('new_password1') or password_form.is_valid()):
+            form.save()
+            if data.get('new_password1'):
+                password_form.save(user)
+                update_session_auth_hash(request, user)  # Re-authenticate the user
+            return JsonResponse({"status": "success"})
+        else:
+            errors = form.errors.copy()
+            errors.update(password_form.errors)
+            return JsonResponse({"status": "error", "errors": errors}, status=400)
     else:
-        user_form = UserChangeForm(instance=request.user)
-        hobby_form = HobbyForm()
-    return render(
-        request,
-        'profile.html',
-        {'user_form': user_form, 'hobby_form': hobby_form})
+        user_data = {
+            'name': user.name,
+            'email': user.email,
+            'date_of_birth': user.date_of_birth,
+            'hobbies': list(user.hobbies.values('id', 'name')),
+        }
+        return JsonResponse(user_data)
+
+def hobbies_view(request):
+    hobbies = Hobby.objects.all().values('id', 'name')
+    return JsonResponse(list(hobbies), safe=False)
 
 @login_required
 def main_spa(request: HttpRequest) -> HttpResponse:
