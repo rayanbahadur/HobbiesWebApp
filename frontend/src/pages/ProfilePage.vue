@@ -114,16 +114,6 @@ export default defineComponent({
         }
         selectedHobbies.value.forEach(hobbyId => formData.append('hobbies', hobbyId.toString()));
 
-        // Log the form data
-        console.log('Form Data:', {
-          name: name.value,
-          email: email.value,
-          date_of_birth: date_of_birth.value,
-          new_password1: newPassword1.value,
-          new_password2: newPassword2.value,
-          hobbies: selectedHobbies.value,
-        });
-
         try {
           const response = await fetch('/api/profile/', {
             method: 'POST',
@@ -151,7 +141,7 @@ export default defineComponent({
       } else if (errors.__all__) {
         errorMessage.value = errors.__all__.join(', ');
       } else {
-        errorMessage.value = 'An error occurred while updating the profile.';
+        errorMessage.value = Object.values(errors).flat().join(', ');
       }
     };
 
