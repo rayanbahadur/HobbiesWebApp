@@ -86,9 +86,20 @@ export default defineComponent({
       return re.test(email);
     };
 
+    const validateDateOfBirth = (dob: string): boolean => {
+      const selectedDate = new Date(dob);
+      const currentDate = new Date();
+      return selectedDate <= currentDate;
+    };
+
     const saveProfile = async () => {
       if (!validateEmail(email.value)) {
         errorMessage.value = 'Invalid email format';
+        return;
+      }
+
+      if (!validateDateOfBirth(date_of_birth.value)) {
+        errorMessage.value = 'Date of birth cannot be in the future';
         return;
       }
 
@@ -162,7 +173,7 @@ export default defineComponent({
 
 <style scoped>
 .custom-label {
-  font-size: 1.25rem; /* Larger font size */
-  font-weight: bold; /* Bold text */
+  font-size: 1.25rem; 
+  font-weight: bold; 
 }
 </style>
