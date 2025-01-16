@@ -1,7 +1,6 @@
 // Example of how to use Vue Router
 
 import { createRouter, createWebHistory } from "vue-router";
-import MainPage from "../pages/MainPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
 import { useUserStore, useUserStoreProfile } from '../store/userStore';

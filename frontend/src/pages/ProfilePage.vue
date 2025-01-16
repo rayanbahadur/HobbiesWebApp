@@ -3,15 +3,15 @@
     <h1 class="mb-4">Profile Page</h1>
     <div v-if="user">
       <form @submit.prevent="saveProfile">
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="name" class="form-label custom-label">Name:</label>
           <input type="text" id="name" class="form-control" v-model="name" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="email" class="form-label custom-label">Email:</label>
           <input type="email" id="email" class="form-control" v-model="email" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="date_of_birth" class="form-label custom-label"
             >Date of Birth:</label
           >
@@ -22,7 +22,7 @@
             v-model="date_of_birth"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="newPassword1" class="form-label custom-label"
             >New Password:</label
           >
@@ -34,7 +34,7 @@
             autocomplete="new-password"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="newPassword2" class="form-label custom-label"
             >Confirm New Password:</label
           >
@@ -46,7 +46,7 @@
             autocomplete="new-password"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label class="form-label custom-label">Hobbies:</label>
           <div v-for="hobby in allHobbies" :key="hobby.id" class="form-check">
             <input
@@ -58,7 +58,7 @@
             <label class="form-check-label">{{ hobby.name }}</label>
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
           <label for="newHobby" class="form-label custom-label"
             >Add New Hobby:</label
           >
@@ -70,7 +70,7 @@
             placeholder="Add New Hobby (Optional)"
           />
         </div>
-        <button type="submit" class="btn btn-success mt-3">Save</button>
+        <button type="submit" class="btn btn-success mb-3">Save</button>
       </form>
       <div v-if="errorMessage" class="alert alert-danger mt-3">
         {{ errorMessage }}

@@ -29,4 +29,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.router-link-active {
+  color: var(--bs-primary) !important;
+  font-weight: bold;
+}
+</style>
