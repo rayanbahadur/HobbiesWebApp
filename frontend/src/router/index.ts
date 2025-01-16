@@ -1,7 +1,6 @@
 // Example of how to use Vue Router
 
 import { createRouter, createWebHistory } from "vue-router";
-import MainPage from "../pages/MainPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
 import { useUserStore, useUserStoreProfile } from '../store/userStore';
@@ -16,7 +15,15 @@ let base =
 const router = createRouter({
   history: createWebHistory(base),
   routes: [
-    { path: "/", name: "Main Page", component: MainPage },
+    {
+      path: "/",
+      name: "Similar Users",
+      component: SimilarUsersPage,
+      beforeEnter: () => {
+        const userStore = useUserStore();
+        return userStore.fetchUsers(); // Ensure users are fetched before entering the route
+      },
+    },
     { 
       path: "/profile/", 
       name: "Profile Page", 
@@ -24,15 +31,6 @@ const router = createRouter({
       beforeEnter: () => {
         const userStore = useUserStoreProfile();
         return userStore.fetchProfile(); // Ensure profile is fetched before entering the route
-      },
-    },
-    {
-      path: "/similar-users/",
-      name: "Similar Users",
-      component: SimilarUsersPage,
-      beforeEnter: () => {
-        const userStore = useUserStore();
-        return userStore.fetchUsers(); // Ensure users are fetched before entering the route
       },
     },
   ],
