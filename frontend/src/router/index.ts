@@ -26,7 +26,7 @@ const router = createRouter({
     },
     { 
       path: "/profile/", 
-      name: "Profile Page", 
+      name: "Profile Page",
       component: ProfilePage,
       beforeEnter: () => {
         const userStore = useUserStoreProfile();
@@ -39,11 +39,20 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const csrfToken = document.cookie
     .split("; ")
-    .find((row) => row.startsWith("csrftoken="));
+    .find((row) => row.startsWith("csrftoken="))
+    ?.split("=")[1]; // Extract the token value
+  
+  const matchedRoute = router.getRoutes().some(route => route.path === to.path);
+  
   if (!csrfToken && to.path !== "/login") {
-    window.location.href = "/login";
+    console.log('No CSRF token found, redirecting to login page.');
+    window.location.href = '/login';
+  } else if (!matchedRoute) {
+    console.log('No route matched, redirecting to login page.');
+    window.location.href = '/login';
   } else {
     next();
   }
 });
+
 export default router;
