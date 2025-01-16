@@ -18,13 +18,14 @@
         <h3>Friend Requests</h3>
         <ul v-if="friendRequests.length">
           <li v-for="request in friendRequests" :key="request.id">
-            {{ request.from_user.username }} sent a request
+            {{ request.from_user.name || 'Unknown' }} sent a request <!-- Use `from_user.name` -->
             <button @click="acceptRequest(request.id)">Accept</button>
             <button @click="rejectRequest(request.id)">Reject</button>
           </li>
         </ul>
         <p v-else>No friend requests found.</p>
       </section>
+
   
       <!-- Search for Friends -->
       <section>
@@ -73,7 +74,9 @@
         try {
           const response = await fetch("/api/friend-requests/");
           if (!response.ok) throw new Error("Failed to fetch friend requests");
-          friendRequests.value = await response.json();
+          const data = await response.json();
+          console.log("Friend Requests:", data); // Debug log
+          friendRequests.value = data;
         } catch (error) {
           console.error(error.message);
         }
@@ -89,21 +92,41 @@
           console.error(error.message);
         }
       };
-  
+      const getCSRFToken = () => {
+        const csrfToken = document.cookie.split(';').find(cookie => cookie.trim().startsWith('csrftoken='));
+        return csrfToken ? csrfToken.split('=')[1] : '';
+      };
+    
       // Send friend request
       const sendFriendRequest = async (userId) => {
         try {
-          const response = await fetch("/api/friend-requests/", {
+          const csrfToken = getCSRFToken();
+          const response = await fetch("/api/friend-requests/send/", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ to_user_id: userId }),
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({ to_user_id: userId }), // Correct payload
           });
-          if (!response.ok) throw new Error("Failed to send friend request");
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            try {
+              const errorJson = JSON.parse(errorText);
+              throw new Error(errorJson.error || "Failed to send friend request");
+            } catch {
+              throw new Error("Unexpected error occurred: " + errorText);
+            }
+          }
+
           alert("Friend request sent!");
         } catch (error) {
           console.error(error.message);
+          alert(error.message);
         }
       };
+
   
       // Accept friend request
       const acceptRequest = async (requestId) => {
