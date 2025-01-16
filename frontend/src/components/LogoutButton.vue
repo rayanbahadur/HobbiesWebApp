@@ -9,23 +9,30 @@ export default defineComponent({
   name: "LogoutButton",
   methods: {
     async logout() {
-      try {
-        const response = await fetch("/logout/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": this.getCookie("csrftoken"),
-          },
-        });
-        if (response.ok) {
-          window.location.href = "/login";
-        } else {
-          console.error("Logout failed");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    },
+  try {
+    const csrfToken = this.getCookie("csrftoken");
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (csrfToken) {
+      headers["X-CSRFToken"] = csrfToken;
+    }
+
+    const response = await fetch("/logout/", {
+      method: "POST",
+      headers,
+    });
+
+    if (response.ok) {
+      window.location.href = "/login";
+    } else {
+      console.error("Logout failed");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+},
     getCookie(name: string) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== "") {
