@@ -1,3 +1,5 @@
+import subprocess
+import time
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,6 +15,24 @@ class UserTestsTests(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        
+        # Start the backend server
+        cls.backend_process = subprocess.Popen(['python', 'manage.py', 'runserver', '127.0.0.1:8000'], cwd='./')
+        time.sleep(5)  # Wait for the backend server to start
+
+        cls.live_server_url = 'http://localhost:5173'
+
+        # Start the frontend server
+        try:
+            cls.frontend_process = subprocess.Popen(['npm', 'run', 'dev'], cwd='../frontend') ## Path seems to be wrong but I'm not sure why
+            time.sleep(10)  # Wait for the frontend server to start
+        except FileNotFoundError as e:
+            print(f"Error starting frontend server: {e}")
+            cls.frontend_process = None
+
+        # Set the live server URL to the frontend server
+        cls.live_server_url = 'http://localhost:5173'
+
         try:
             cls.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
             cls.driver.implicitly_wait(10)
