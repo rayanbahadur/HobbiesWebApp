@@ -34,8 +34,8 @@ urlpatterns = [
     # Friend Request URLs
     path('friend-requests/', views.list_friend_requests, name='list_friend_requests'),
     path('friend-requests/send/', views.send_friend_request, name='send_friend_request'),
-    path('friend-requests/accept/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
-    path('friend-requests/reject/<int:request_id>/', views.reject_friend_request, name='reject_friend_request'),
+    path('friend-requests/accept/', views.accept_friend_request, name='accept_friend_request'),
+    path('friend-requests/reject/', views.reject_friend_request, name='reject_friend_request'),
 
     # Friends and Search URLs
     path('friends/', views.list_friends, name='list_friends'),
