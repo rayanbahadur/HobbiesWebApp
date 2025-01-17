@@ -40,3 +40,29 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['name', 'date_of_birth']
 
     objects = CustomUserManager()
+
+
+# Friend Request Model
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_friend_requests")
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_friend_requests")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("from_user", "to_user")
+
+    def __str__(self):
+        return f"Friend Request from {self.from_user.email} to {self.to_user.email}"
+
+
+# Friendship Model
+class Friendship(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends")
+    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_of")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "friend")
+
+    def __str__(self):
+        return f"{self.user.email} is friends with {self.friend.email}"
