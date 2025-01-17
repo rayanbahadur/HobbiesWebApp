@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
 import FriendsPage from "../pages/Friends.vue";
+import { useUserStore, useUserStoreProfile } from '../store/userStore';
 
 let base =
   import.meta.env.MODE == "development" ? import.meta.env.BASE_URL : "";
@@ -12,7 +13,6 @@ let base =
 const router = createRouter({
   history: createWebHistory(base),
   routes: [
-    { path: "/", name: "Main Page", component: MainPage },
     {
       path: "/profile/",
       name: "Profile Page",
