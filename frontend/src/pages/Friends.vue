@@ -122,8 +122,8 @@
 
           alert("Friend request sent!");
         } catch (error) {
-          console.error(error.erroe);
-          alert(error.error);
+          console.error(error.message);
+          alert(error.message);
         }
       };
 
@@ -146,7 +146,7 @@
           fetchFriendRequests(); // Refresh friend requests
           fetchFriends(); // Refresh friends list
         } catch (error) {
-          console.error(error.error);
+          console.error(error.message);
         }
       };
 
@@ -167,7 +167,7 @@
 
           fetchFriendRequests(); // Refresh friend requests
         } catch (error) {
-          console.error(error.error);
+          console.error(error.message);
         }
       };
       // Fetch initial data
