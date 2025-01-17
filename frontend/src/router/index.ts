@@ -3,7 +3,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
-import FriendsPage from "../pages/Friends.vue";
 import { useUserStore, useUserStoreProfile } from '../store/userStore';
 
 
@@ -16,11 +15,6 @@ let base =
 const router = createRouter({
   history: createWebHistory(base),
   routes: [
-    {
-      path: "/friends/",
-      name: "Friends Page",
-      component: FriendsPage, // Navigate to FriendsPage component
-    },
     {
       path: "/",
       name: "Similar Users",
