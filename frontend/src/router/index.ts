@@ -3,30 +3,26 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
-import FriendsPage from "../pages/Friends.vue";
+import { useUserStore, useUserStoreProfile } from '../store/userStore';
+
 
 let base =
   import.meta.env.MODE == "development" ? import.meta.env.BASE_URL : "";
 
-// Define routes
+// 2. Define some routes
+// Each route should map to a component.
+// We'll talk about nested routes later.
 const router = createRouter({
   history: createWebHistory(base),
   routes: [
-    { path: "/", name: "Main Page", component: MainPage },
-    {
-      path: "/profile/",
-      name: "Profile Page",
-      component: ProfilePage,
-    },
     {
       path: "/",
       name: "Similar Users",
       component: SimilarUsersPage,
-    },
-    {
-      path: "/friends/",
-      name: "Friends Page",
-      component: FriendsPage, // Navigate to FriendsPage component
+      beforeEnter: () => {
+        const userStore = useUserStore();
+        return userStore.fetchUsers(); // Ensure users are fetched before entering the route
+      },
     },
     { 
       path: "/profile/", 
@@ -40,7 +36,6 @@ const router = createRouter({
   ],
 });
 
-// Global navigation guard
 router.beforeEach((to, from, next) => {
   const csrfToken = document.cookie
     .split("; ")

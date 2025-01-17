@@ -1,5 +1,4 @@
 from datetime import timedelta, datetime
-import json
 from django.http import JsonResponse, HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -14,7 +13,7 @@ from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from .forms import UserCreationForm, UserChangeForm, CustomPasswordChangeForm
-from .models import User, Hobby, Friendship, FriendRequest
+from .models import User, Hobby
 
 def signup_view(request):
     if request.method == 'POST':
@@ -164,137 +163,3 @@ def similar_view(request):
         'page': page_number,
         'num_pages': paginator.num_pages,
     })
-
-@login_required
-@require_http_methods(["POST"])
-def send_friend_request(request):
-    try:
-        # Parse JSON body
-        data = json.loads(request.body)
-        to_user_id = data.get('to_user_id')
-
-        if not to_user_id:
-            return JsonResponse({"error": "to_user_id is required"}, status=400)
-
-        if request.user.id == int(to_user_id):
-            return JsonResponse({"error": "You cannot send a friend request to yourself"}, status=400)
-
-        to_user = User.objects.get(id=to_user_id)
-
-        # Check if the friend request already exists
-        if FriendRequest.objects.filter(from_user=request.user, to_user=to_user).exists():
-            return JsonResponse({"error": "Friend request already sent"}, status=400)
-
-        # Check if already friends
-        if Friendship.objects.filter(user=request.user, friend=to_user).exists():
-            return JsonResponse({"error": "You are already friends"}, status=400)
-
-        # Create the friend request
-        FriendRequest.objects.create(from_user=request.user, to_user=to_user)
-        return JsonResponse({"message": "Friend request sent"}, status=201)
-
-    except User.DoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
-
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON data"}, status=400)
-
-    except Exception as e:
-        return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
-
-
-@login_required
-@require_http_methods(["POST"])
-def accept_friend_request(request):
-    try:
-        data = json.loads(request.body)  # Parse the request body
-        request_id = data.get('request_id')  # Extract `request_id`
-        
-        if not request_id:
-            return JsonResponse({"error": "Request ID is required"}, status=400)
-
-        friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
-        
-        # Create friendships for both users
-        Friendship.objects.create(user=friend_request.from_user, friend=friend_request.to_user)
-        Friendship.objects.create(user=friend_request.to_user, friend=friend_request.from_user)
-        friend_request.delete()
-        return JsonResponse({"message": "Friend request accepted"}, status=200)
-    
-    except FriendRequest.DoesNotExist:
-        return JsonResponse({"error": "Friend request not found"}, status=404)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON data"}, status=400)
-    except Exception as e:
-        return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
-
-
-
-@login_required
-@require_http_methods(["POST"])
-def reject_friend_request(request):
-    try:
-        data = json.loads(request.body)  # Parse the request body
-        request_id = data.get('request_id')  # Extract `request_id`
-
-        if not request_id:
-            return JsonResponse({"error": "Request ID is required"}, status=400)
-
-        friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
-        friend_request.delete()
-        return JsonResponse({"message": "Friend request rejected"}, status=200)
-    
-    except FriendRequest.DoesNotExist:
-        return JsonResponse({"error": "Friend request not found"}, status=404)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON data"}, status=400)
-    except Exception as e:
-        return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
-
-
-@login_required
-@require_http_methods(["GET"])
-def list_friends(request):
-    friendships = Friendship.objects.filter(user=request.user)
-    friends_data = [
-        {"id": friendship.friend.id, "name": friendship.friend.name, "email": friendship.friend.email}
-        for friendship in friendships
-    ]
-    return JsonResponse(friends_data, safe=False, status=200)
-
-@login_required
-@require_http_methods(["GET"])
-def list_friend_requests(request):
-    friend_requests = FriendRequest.objects.filter(to_user=request.user).select_related('from_user')
-    data = [
-        {
-            'id': fr.id,
-            'from_user': {
-                'id': fr.from_user.id,
-                'name': fr.from_user.name,
-                'email': fr.from_user.email,
-            },
-            'created_at': fr.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-        }
-        for fr in friend_requests
-    ]
-    return JsonResponse(data, safe=False)
-
-@login_required
-def search_users(request):
-    query = request.GET.get('q', '').strip()  # Get the query parameter
-    if not query:
-        return JsonResponse({"message": "No search query provided"}, status=400)
-
-    # Search for users by name or email
-    users = User.objects.filter(
-        name__icontains=query  # You can also add `| email__icontains=query` for email search
-    ).exclude(id=request.user.id)  # Exclude the logged-in user
-
-    # Prepare response data
-    user_data = [
-        {"id": user.id, "username": user.name, "email": user.email}
-        for user in users
-    ]
-
-    return JsonResponse(user_data, safe=False)
