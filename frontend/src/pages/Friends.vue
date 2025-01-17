@@ -1,49 +1,54 @@
 <template>
-    <h1>Friends Page</h1>
-    <div class="container">
-  
-      <!-- Friends List -->
-      <section>
-        <h3>Friends</h3>
-        <ul v-if="friends.length">
-          <li v-for="friend in friends" :key="friend.id">
-            {{ friend.name }}
-          </li>
-        </ul>
-        <p v-else>No friends found.</p>
-      </section>
-  
-      <!-- Friend Requests -->
-      <section>
-        <h3>Friend Requests</h3>
-        <ul v-if="friendRequests.length">
-          <li v-for="request in friendRequests" :key="request.id">
-            {{ request.from_user.name || 'Unknown' }} sent a request <!-- Use `from_user.name` -->
-            <button @click="acceptRequest(request.id)">Accept</button>
-            <button @click="rejectRequest(request.id)">Reject</button>
-          </li>
-        </ul>
-        <p v-else>No friend requests found.</p>
-      </section>
-
-  
-      <!-- Search for Friends -->
-      <section>
-        <h3>Search for Friends</h3>
+  <h1 class="mb-4">Friends Page</h1>  
+  <!-- Search for Friends -->
+  <div>
+    <h3 class="mb-3">Search for Friends</h3>
+    <div class="row g-3 mb-3">
+      <div class="col-sm-11">
         <input
+          class="form-control"
           v-model="searchQuery"
           placeholder="Search by username"
           @keyup.enter="searchFriends"
         />
-        <button @click="searchFriends">Search</button>
-        <ul v-if="searchResults.length">
-          <li v-for="user in searchResults" :key="user.id">
-            {{ user.username }}
-            <button @click="sendFriendRequest(user.id)">Send Friend Request</button>
+      </div>
+      <div class="col-sm-1">
+        <button class="btn btn-primary w-100" @click="searchFriends">Search</button>
+      </div>
+    </div>
+    <ul class="list-group mb-3" v-if="searchResults.length">
+      <li class="list-group-item d-flex justify-content-between align-items-center" v-for="user in searchResults" :key="user.id">
+        {{ user.username }}
+        <button class="btn btn-secondary" @click="sendFriendRequest(user.id)">Send Friend Request</button>
+      </li>
+    </ul>
+    <p v-else-if="searchClicked" class="alert alert-warning">No results found.</p>
+  </div>
+  <!-- Friends List -->
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="mb-3">Friends</h3>
+        <ul class="list-group" v-if="friends.length">
+          <li class="list-group-item" v-for="friend in friends" :key="friend.id">
+            {{ friend.name}}
           </li>
         </ul>
-        <p v-else>No results found.</p>
-      </section>
+        <p class="alert alert-light" v-else>No friends found.</p>
+      </div>
+
+      <div class="col-md-6">
+        <h3 class="mb-3">Friend Requests</h3>
+        <ul class="list-group mb-3" v-if="friendRequests.length">
+          <li class="list-group-item d-flex justify-content-between align-items-center" v-for="request in friendRequests" :key="request.id">
+            {{ request.from_user.name || 'Unknown' }} sent a request
+            <div class="btn-group" role="group" aria-label="Friend Request Actions">
+              <button class="btn btn-primary" @click="acceptRequest(request.id)">Accept</button>
+              <button class="btn btn-danger" @click="rejectRequest(request.id)">Reject</button>
+            </div>
+          </li>
+        </ul>
+        <p class="alert alert-light" v-else>No friend requests found.</p>
+      </div>
     </div>
   </template>
   
@@ -75,6 +80,7 @@
       const friendRequests = ref<FriendRequest[]>([]);
       const searchQuery = ref<string>("");
       const searchResults = ref<SearchResult[]>([]);
+      const searchClicked = ref<boolean>(false);
   
       // Fetch friends
       const fetchFriends = async () => {
@@ -111,6 +117,7 @@
       // Search for friends
       const searchFriends = async () => {
         try {
+          searchClicked.value = true;
           const response = await fetch(`/api/search/?q=${encodeURIComponent(searchQuery.value)}`);
           if (!response.ok) throw new Error("Failed to search users");
           searchResults.value = await response.json();
@@ -246,6 +253,7 @@
         friendRequests,
         searchQuery,
         searchResults,
+        searchClicked,
         fetchFriends,
         fetchFriendRequests,
         searchFriends,
