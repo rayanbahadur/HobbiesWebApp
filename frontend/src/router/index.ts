@@ -1,7 +1,6 @@
 // Example of how to use Vue Router
 
 import { createRouter, createWebHistory } from "vue-router";
-import MainPage from "../pages/MainPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import SimilarUsersPage from "../pages/SimilarUsersPage.vue";
 import FriendsPage from "../pages/Friends.vue";
@@ -20,7 +19,7 @@ const router = createRouter({
       component: ProfilePage,
     },
     {
-      path: "/similar-users/",
+      path: "/",
       name: "Similar Users",
       component: SimilarUsersPage,
     },
@@ -29,6 +28,15 @@ const router = createRouter({
       name: "Friends Page",
       component: FriendsPage, // Navigate to FriendsPage component
     },
+    { 
+      path: "/profile/", 
+      name: "Profile Page",
+      component: ProfilePage,
+      beforeEnter: () => {
+        const userStore = useUserStoreProfile();
+        return userStore.fetchProfile(); // Ensure profile is fetched before entering the route
+      },
+    },
   ],
 });
 
@@ -36,9 +44,17 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const csrfToken = document.cookie
     .split("; ")
-    .find((row) => row.startsWith("csrftoken="));
+    .find((row) => row.startsWith("csrftoken="))
+    ?.split("=")[1]; // Extract the token value
+  
+  const matchedRoute = router.getRoutes().some(route => route.path === to.path);
+  
   if (!csrfToken && to.path !== "/login") {
-    window.location.href = "/login";
+    console.log('No CSRF token found, redirecting to login page.');
+    window.location.href = '/login';
+  } else if (!matchedRoute) {
+    console.log('No route matched, redirecting to login page.');
+    window.location.href = '/login';
   } else {
     next();
   }

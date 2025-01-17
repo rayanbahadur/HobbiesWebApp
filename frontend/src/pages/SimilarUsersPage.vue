@@ -1,21 +1,31 @@
 <template>
   <div>
-    <h1>Users with Similar Hobbies</h1>
-    <div>
-      <label>Age Min:</label>
-      <input type="number" v-model="ageMin" />
-      <label>Age Max:</label>
-      <input type="number" v-model="ageMax" />
-      <button @click="applyFilters">Filter</button>
+    <h1 class="mb-4">Users with Similar Hobbies</h1>
+    <div class="row g-2 mb-3">
+      <div class="input-group col mb-3">
+        <span for="ageMin" class="input-group-text" id="inputGroup-sizing-default">Min Age</span>
+        <input type="number" id="ageMin" v-model="ageMin" class="form-control" />
+      </div>
+      <div class="input-group col mb-3">
+        <span for="ageMax" class="input-group-text" id="inputGroup-sizing-default">Max Age</span>
+        <input type="number" id="ageMax" v-model="ageMax" class="form-control" />
+      </div>
+      <div class="col mb-3">
+        <button @click="applyFilters" class="btn btn-primary w-30">Filter</button>
+      </div>
     </div>
-    <ul>
-      <li v-for="user in users" :key="user.email">
-        {{ user.name }} ({{ user.common_hobbies }} common hobbies)
+    <ul class="list-group">
+      <li v-for="user in users" :key="user.email" class="list-group-item d-flex justify-content-between align-items-center">
+        {{ user.name }}
+        <span class="badge bg-secondary rounded-pill">{{ user.common_hobbies }} {{user.common_hobbies > 1? "shared hobbies" : "shared hobby"}}</span>
       </li>
     </ul>
-    <div>
-      <button @click="prevPage" :disabled="page <= 1">Previous</button>
-      <button @click="nextPage" :disabled="page >= numPages">Next</button>
+    <div v-if="users.length === 0" class="alert alert-warning mt-3" role="alert">
+      No Results found. Adjust Filters and try again.
+    </div>
+    <div class="btn-group mt-3" role="group" aria-label="Pagination">
+      <button class="btn btn-outline-secondary" @click="prevPage" :disabled="page <= 1">Previous</button>
+      <button class="btn btn-outline-secondary" @click="nextPage" :disabled="page >= numPages">Next</button>
     </div>
   </div>
 </template>

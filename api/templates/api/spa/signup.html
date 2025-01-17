@@ -67,15 +67,19 @@
                   </div>
 
                   <div class="mb-3 row align-items-center">
-                    <label for="id_date_of_birth" class="col-sm-4 col-form-label">Date of Birth:</label>
+                    <label
+                      for="id_date_of_birth"
+                      class="col-sm-4 col-form-label"
+                      >Date of Birth:</label
+                    >
                     <div class="col-sm-8">
-                        <input
+                      <input
                         type="date"
                         name="date_of_birth"
                         id="id_date_of_birth"
                         class="form-control"
                         value="{{ form.date_of_birth.value|default_if_none:'' }}"
-                        />
+                      />
                     </div>
                     {% if form.date_of_birth.errors %}
                     <div class="text-danger">
@@ -116,29 +120,37 @@
 
                   <div class="mb-3">
                     <div class="dropdown">
-                      <button 
-                        class="form-control dropdown-toggle text-start" 
-                        type="button" 
-                        id="dropdownMenuButton" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false">
+                      <button
+                        class="form-control dropdown-toggle text-start"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
                         Select Hobbies
                       </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 100%">
+                      <ul
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButton"
+                        style="width: 100%"
+                      >
                         {% for hobby in form.hobbies.field.queryset %}
                         <li>
                           <div class="form-check ms-3">
-                            <input 
-                              class="form-check-input" 
-                              type="checkbox" 
-                              name="hobbies" 
-                              id="hobby_{{ hobby.id }}" 
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              name="hobbies"
+                              id="hobby_{{ hobby.id }}"
                               value="{{ hobby.id }}"
                               {% if hobby in form.hobbies.value %}
-                                checked
+                              checked
                               {% endif %}
                             />
-                            <label class="form-check-label" for="hobby_{{ hobby.id }}">
+                            <label
+                              class="form-check-label"
+                              for="hobby_{{ hobby.id }}"
+                            >
                               {{ hobby.name }}
                             </label>
                           </div>
@@ -155,26 +167,16 @@
                     {% endif %}
                   </div>
 
-                  <div class="mb-3">
-                    <input
-                      type="text"
-                      id="new_hobby"
-                      name="new_hobby"
-                      class="form-control"
-                      placeholder="Add New Hobby (Optional)"
-                    />
-                  </div>
-
-                  <button
-                  type="submit"
-                  class="btn btn-primary w-100">SIGN UP</button>
+                  <button type="submit" class="btn btn-primary w-100">
+                    SIGN UP
+                  </button>
                 </form>
-                    <div class="text-center">
-                        <p>
-                        Already a member?
-                        <a href="/login" style="text-decoration: none">Login</a>
-                        </p>
-                  </div>
+                <div class="text-center">
+                  <p>
+                    Already a member?
+                    <a href="/login" style="text-decoration: none">Login</a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -185,7 +187,7 @@
 </html>
 
 <style>
-    .gradient-custom {
-      background: linear-gradient(#000128 20%,#2e2f6e 60%, #8f96be 100%);
-    }
-  </style>
+  .gradient-custom {
+    background: linear-gradient(#000128 20%, #2e2f6e 60%, #8f96be 100%);
+  }
+</style>
