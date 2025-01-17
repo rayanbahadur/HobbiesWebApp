@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from django.contrib.auth import get_user_model
 
@@ -57,9 +59,11 @@ class UserTestsTests(LiveServerTestCase):
         self.driver.find_element(By.NAME, 'date_of_birth').send_keys('01-01-2000')
         self.driver.find_element(By.NAME, 'password1').send_keys('Str0ngP@ssw0rd!')
         self.driver.find_element(By.NAME, 'password2').send_keys('Str0ngP@ssw0rd!')
-        self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+        submit_button = self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+        submit_button.click()
         self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
-
+        
     def test_02_login(self):
         self.driver.get(f'{self.live_server_url}/login/')
         self.driver.find_element(By.NAME, 'email').send_keys('testuser@example.com')
@@ -77,12 +81,20 @@ class UserTestsTests(LiveServerTestCase):
         self.driver.find_element(By.ID, 'date_of_birth').send_keys('01-01-1999')
         self.driver.find_element(By.ID, 'newPassword1').send_keys('newStr0ngP@ssw0rd!')
         self.driver.find_element(By.ID, 'newPassword2').send_keys('newStr0ngP@ssw0rd!')
-        time.sleep(10)  # Wait for the form to update
-        self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
-        # self.assertEqual(Alert.text, 'Profile updated successfully')
-        Alert.accept()
+        time.sleep(5)
+        submit_button = self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
+        time.sleep(5)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+        submit_button.click()
+        time.sleep(5)
 
-        # Verify the page reload
+        # Handle and verify alert
+        WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert
+        self.assertEqual(alert.text, 'Profile updated successfully')
+        alert.accept()
+
+        # Verify the page reloads to the profile page
         self.assertEqual(self.driver.current_url, f'{self.live_server_url}/profile/')
 
     # def test_users_page_with_age_filter(self):
