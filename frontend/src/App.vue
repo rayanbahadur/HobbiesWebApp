@@ -8,6 +8,12 @@
         <li class="nav-item">
           <router-link class="nav-link" :to="{ name: 'Profile Page' }">Profile Page</router-link>
         </li>
+        <li class="nav-item">
+          <router-link class="nav-link" :to="{ name: 'Similar Users' }">Similar Users</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" :to="{ name: 'Friends Page' }">Friends</router-link>
+        </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="nav-item">
