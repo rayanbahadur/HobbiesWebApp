@@ -1,6 +1,6 @@
 <template>
+    <h1>Friends Page</h1>
     <div class="container">
-      <h2>Friends Page</h2>
   
       <!-- Friends List -->
       <section>
@@ -114,13 +114,17 @@
             const errorText = await response.text();
             try {
               const errorJson = JSON.parse(errorText);
-              throw new Error(errorJson.error || "Failed to send friend request");
+              if (errorJson.error === "You are already friends") {
+                alert("You are already friends with this user.");
+              } else {
+                throw new Error(errorJson.error || "Failed to send friend request");
+              }
             } catch {
               throw new Error("Unexpected error occurred: " + errorText);
             }
+          } else {
+            alert("Friend request sent!");
           }
-
-          alert("Friend request sent!");
         } catch (error) {
           console.error(error.message);
           alert(error.message);
@@ -141,12 +145,21 @@
             body: JSON.stringify({ request_id: requestId }), // Send request_id in the body
           });
 
-          if (!response.ok) throw new Error("Failed to accept friend request");
+          if (!response.ok) {
+            const errorText = await response.text();
+            try {
+              const errorJson = JSON.parse(errorText);
+              throw new Error(errorJson.error || "Failed to accept friend request");
+            } catch {
+              throw new Error("Unexpected error occurred: " + errorText);
+            }
+          }
 
           fetchFriendRequests(); // Refresh friend requests
           fetchFriends(); // Refresh friends list
         } catch (error) {
           console.error(error.message);
+          alert(error.message);
         }
       };
 
@@ -163,11 +176,20 @@
             body: JSON.stringify({ request_id: requestId }), // Send request_id in the body
           });
 
-          if (!response.ok) throw new Error("Failed to reject friend request");
+          if (!response.ok) {
+            const errorText = await response.text();
+            try {
+              const errorJson = JSON.parse(errorText);
+              throw new Error(errorJson.error || "Failed to reject friend request");
+            } catch {
+              throw new Error("Unexpected error occurred: " + errorText);
+            }
+          }
 
           fetchFriendRequests(); // Refresh friend requests
         } catch (error) {
           console.error(error.message);
+          alert(error.message);
         }
       };
       // Fetch initial data
@@ -205,4 +227,3 @@
     margin-right: 1rem;
   }
   </style>
-  
