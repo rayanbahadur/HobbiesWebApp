@@ -42,7 +42,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const csrfToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrftoken="))

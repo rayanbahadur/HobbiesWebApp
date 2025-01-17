@@ -49,14 +49,32 @@
   
   <script lang="ts">
   import { defineComponent, ref } from "vue";
+
+  interface Friend {
+    id: number;
+    name: string;
+  }
+
+  interface FriendRequest {
+    id: number;
+    from_user: {
+      id: number;
+      name: string;
+    };
+  }
+
+  interface SearchResult {
+    id: number;
+    username: string;
+  }
   
   export default defineComponent({
     setup() {
       // Data
-      const friends = ref([]);
-      const friendRequests = ref([]);
-      const searchQuery = ref("");
-      const searchResults = ref([]);
+      const friends = ref<Friend[]>([]);
+      const friendRequests = ref<FriendRequest[]>([]);
+      const searchQuery = ref<string>("");
+      const searchResults = ref<SearchResult[]>([]);
   
       // Fetch friends
       const fetchFriends = async () => {
@@ -65,7 +83,11 @@
           if (!response.ok) throw new Error("Failed to fetch friends");
           friends.value = await response.json();
         } catch (error) {
-          console.error(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+          } else {
+            console.error(String(error));
+          }
         }
       };
   
@@ -78,7 +100,11 @@
           console.log("Friend Requests:", data); // Debug log
           friendRequests.value = data;
         } catch (error) {
-          console.error(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+          } else {
+            console.error(String(error));
+          }
         }
       };
   
@@ -89,7 +115,11 @@
           if (!response.ok) throw new Error("Failed to search users");
           searchResults.value = await response.json();
         } catch (error) {
-          console.error(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+          } else {
+            console.error(String(error));
+          }
         }
       };
       const getCSRFToken = () => {
@@ -126,8 +156,13 @@
             alert("Friend request sent!");
           }
         } catch (error) {
-          console.error(error.message);
-          alert(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+            alert(error.message);
+          } else {
+            console.error(String(error));
+            alert("An unexpected error occurred.");
+          }          
         }
       };
 
@@ -158,8 +193,13 @@
           fetchFriendRequests(); // Refresh friend requests
           fetchFriends(); // Refresh friends list
         } catch (error) {
-          console.error(error.message);
-          alert(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+            alert(error.message);
+          } else {
+            console.error(String(error));
+            alert("An unexpected error occurred.");
+          }          
         }
       };
 
@@ -188,8 +228,13 @@
 
           fetchFriendRequests(); // Refresh friend requests
         } catch (error) {
-          console.error(error.message);
-          alert(error.message);
+          if (error instanceof Error) {
+            console.error(error.message);
+            alert(error.message);
+          } else {
+            console.error(String(error));
+            alert("An unexpected error occurred.");
+          }          
         }
       };
       // Fetch initial data
