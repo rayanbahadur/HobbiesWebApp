@@ -7,7 +7,7 @@
         <h3>Friends</h3>
         <ul v-if="friends.length">
           <li v-for="friend in friends" :key="friend.id">
-            {{ friend.username }} (Friends since: {{ friend.since }})
+            {{ friend.name }}
           </li>
         </ul>
         <p v-else>No friends found.</p>
@@ -98,7 +98,7 @@
       };
     
       // Send friend request
-      const sendFriendRequest = async (userId) => {
+      const sendFriendRequest = async (userId: number) => {
         try {
           const csrfToken = getCSRFToken();
           const response = await fetch("/api/friend-requests/send/", {
@@ -122,43 +122,54 @@
 
           alert("Friend request sent!");
         } catch (error) {
-          console.error(error.message);
-          alert(error.message);
+          console.error(error.erroe);
+          alert(error.error);
         }
       };
 
   
       // Accept friend request
-      const acceptRequest = async (requestId) => {
+      const acceptRequest = async (requestId: number) => {
         try {
+          const csrfToken = getCSRFToken();
           const response = await fetch("/api/friend-requests/accept/", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ request_id: requestId }),
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken, // Include CSRF token in the headers
+            },
+            body: JSON.stringify({ request_id: requestId }), // Send request_id in the body
           });
+
           if (!response.ok) throw new Error("Failed to accept friend request");
+
           fetchFriendRequests(); // Refresh friend requests
           fetchFriends(); // Refresh friends list
         } catch (error) {
-          console.error(error.message);
+          console.error(error.error);
         }
       };
-  
+
       // Reject friend request
-      const rejectRequest = async (requestId) => {
+      const rejectRequest = async (requestId: number) => {
         try {
+          const csrfToken = getCSRFToken();
           const response = await fetch("/api/friend-requests/reject/", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ request_id: requestId }),
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken, // Include CSRF token in the headers
+            },
+            body: JSON.stringify({ request_id: requestId }), // Send request_id in the body
           });
+
           if (!response.ok) throw new Error("Failed to reject friend request");
+
           fetchFriendRequests(); // Refresh friend requests
         } catch (error) {
-          console.error(error.message);
+          console.error(error.error);
         }
       };
-  
       // Fetch initial data
       fetchFriends();
       fetchFriendRequests();

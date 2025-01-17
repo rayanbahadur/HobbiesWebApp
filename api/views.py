@@ -201,27 +201,52 @@ def send_friend_request(request):
 
 @login_required
 @require_http_methods(["POST"])
-def accept_friend_request(request, request_id):
+def accept_friend_request(request):
     try:
+        data = json.loads(request.body)  # Parse the request body
+        request_id = data.get('request_id')  # Extract `request_id`
+        
+        if not request_id:
+            return JsonResponse({"error": "Request ID is required"}, status=400)
+
         friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
+        
         # Create friendships for both users
         Friendship.objects.create(user=friend_request.from_user, friend=friend_request.to_user)
         Friendship.objects.create(user=friend_request.to_user, friend=friend_request.from_user)
         friend_request.delete()
         return JsonResponse({"message": "Friend request accepted"}, status=200)
+    
     except FriendRequest.DoesNotExist:
-        return JsonResponse({"message": "Friend request not found"}, status=404)
+        return JsonResponse({"error": "Friend request not found"}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
+
 
 
 @login_required
 @require_http_methods(["POST"])
-def reject_friend_request(request, request_id):
+def reject_friend_request(request):
     try:
+        data = json.loads(request.body)  # Parse the request body
+        request_id = data.get('request_id')  # Extract `request_id`
+
+        if not request_id:
+            return JsonResponse({"error": "Request ID is required"}, status=400)
+
         friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user)
         friend_request.delete()
         return JsonResponse({"message": "Friend request rejected"}, status=200)
+    
     except FriendRequest.DoesNotExist:
-        return JsonResponse({"message": "Friend request not found"}, status=404)
+        return JsonResponse({"error": "Friend request not found"}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
+
 
 @login_required
 @require_http_methods(["GET"])
