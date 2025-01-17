@@ -1,5 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.utils.timezone import now
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from .models import User, Hobby
@@ -21,6 +23,16 @@ class UserCreationForm(UserCreationForm):
         widget=forms.CheckboxSelectMultiple,
         label="Hobbies"
         )
+    
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        if date_of_birth >= now().date():
+            raise ValidationError("The date of birth must be in the past.")
+        age = (now().date() - date_of_birth).days // 365
+        if age < 18:
+            raise ValidationError("You must be at least 18 years old to sign up.")
+        return date_of_birth
+    
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:

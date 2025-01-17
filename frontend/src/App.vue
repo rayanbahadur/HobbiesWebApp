@@ -3,7 +3,7 @@
     <nav class="navbar navbar-inverse">
       <ul class="nav navbar-nav" style="flex-direction: row; gap: 2em">
         <li class="nav-item">
-          <router-link class="nav-link" :to="{ name: 'Main Page' }">Main Page</router-link>
+          <router-link class="nav-link" :to="{ name: 'Similar Users' }">Similar Users</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" :to="{ name: 'Profile Page' }">Profile Page</router-link>
@@ -35,4 +35,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.router-link-active {
+  color: var(--bs-primary) !important;
+  font-weight: bold;
+}
+</style>

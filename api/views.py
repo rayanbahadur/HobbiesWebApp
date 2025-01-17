@@ -23,13 +23,6 @@ def signup_view(request):
             user = form.save(commit=False)
             user.save()
 
-            new_hobbies = request.POST.get('new_hobby')
-            if new_hobbies:
-                hobby_names = [hobby.strip() for hobby in new_hobbies.split(',')]
-                for hobby_name in hobby_names:
-                    hobby, created = Hobby.objects.get_or_create(name=hobby_name)
-                    user.hobbies.add(hobby)
-
             existing_hobbies = form.cleaned_data.get('hobbies', [])
             user.hobbies.add(*existing_hobbies)  # Combine both new and selected hobbies
             
@@ -59,7 +52,6 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
-@require_http_methods(["GET", "POST"])
 def profile_view(request: HttpRequest) -> HttpResponse:
     user = request.user
     if request.method == "POST":
@@ -72,7 +64,15 @@ def profile_view(request: HttpRequest) -> HttpResponse:
             data.setlist('hobbies', hobbies)
         else:
             data.setlist('hobbies', list(user.hobbies.values_list('id', flat=True)))
-        
+
+        new_hobby = request.POST.get('new_hobby')
+        if new_hobby:
+            hobby_names = [hobby.strip().capitalize() for hobby in new_hobby.split(',')]
+            for hobby_name in hobby_names:
+                hobby, created = Hobby.objects.get_or_create(name=hobby_name)
+                user.hobbies.add(hobby)
+                data.appendlist('hobbies', hobby.id)
+
         form = UserChangeForm(data, instance=user)
         password_form = CustomPasswordChangeForm(data)
         
@@ -81,6 +81,10 @@ def profile_view(request: HttpRequest) -> HttpResponse:
             if data.get('new_password1'):
                 password_form.save(user)
                 update_session_auth_hash(request, user)  # Re-authenticate the user
+
+            existing_hobbies = form.cleaned_data.get('hobbies', [])
+            user.hobbies.add(*existing_hobbies)  # Combine both new and selected hobbies
+
             return JsonResponse({"status": "success"})
         else:
             errors = form.errors.copy()
