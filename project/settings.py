@@ -64,11 +64,13 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:8000',
+    'https://group-25-web-apps-ec22431.apps.a.comp-teach.qmul.ac.uk',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:8000',
+    'https://group-25-web-apps-ec22431.apps.a.comp-teach.qmul.ac.uk',
 ]
 
 ROOT_URLCONF = 'project.urls'
