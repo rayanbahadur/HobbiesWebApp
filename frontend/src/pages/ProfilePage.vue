@@ -103,7 +103,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await userStore.fetchProfile();
-      const response = await fetch("/api/hobbies/");
+      const response = await fetch("/hobbies/");
       if (response.ok) {
         allHobbies.value = await response.json();
         selectedHobbies.value =
@@ -165,7 +165,7 @@ export default defineComponent({
         }
 
         try {
-          const response = await fetch("/api/profile/", {
+          const response = await fetch("/profile/", {
             method: "POST",
             headers: {
               "X-CSRFToken": getCsrfToken(),
