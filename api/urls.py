@@ -27,18 +27,18 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('similar/', views.similar_view, name='similar'),
-    path('profile/', views.profile_view, name='profile'),
-    path('hobbies/', views.hobbies_view, name='hobbies'),
+    path('api/similar/', views.similar_view, name='similar'),
+    path('api/profile/', views.profile_view, name='profile'),
+    path('api/hobbies/', views.hobbies_view, name='hobbies'),
     path('', login_required(main_spa), name='main_spa'),
     # Friend Request URLs
-    path('friend-requests/', views.list_friend_requests, name='list_friend_requests'),
-    path('friend-requests/send/', views.send_friend_request, name='send_friend_request'),
-    path('friend-requests/accept/', views.accept_friend_request, name='accept_friend_request'),
-    path('friend-requests/reject/', views.reject_friend_request, name='reject_friend_request'),
+    path('api/friend-requests/', views.list_friend_requests, name='list_friend_requests'),
+    path('api/friend-requests/send/', views.send_friend_request, name='send_friend_request'),
+    path('api/friend-requests/accept/', views.accept_friend_request, name='accept_friend_request'),
+    path('api/friend-requests/reject/', views.reject_friend_request, name='reject_friend_request'),
 
     # Friends and Search URLs
-    path('friends/', views.list_friends, name='list_friends'),
-    path('search/', search_users, name='search_users'),
+    path('api/friends/', views.list_friends, name='list_friends'),
+    path('api/search/', search_users, name='search_users'),
 
 ]

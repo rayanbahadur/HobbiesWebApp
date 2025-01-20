@@ -101,9 +101,11 @@ export default defineComponent({
     const newHobby = ref<string>("");
     const errorMessage = ref<string>("");
 
+    const baseURL = "http://localhost:8000/";
+
     onMounted(async () => {
       await userStore.fetchProfile();
-      const response = await fetch("/hobbies/");
+      const response = await fetch(`${baseURL}api/hobbies/`);
       if (response.ok) {
         allHobbies.value = await response.json();
         selectedHobbies.value =
@@ -165,7 +167,7 @@ export default defineComponent({
         }
 
         try {
-          const response = await fetch("/profile/", {
+          const response = await fetch(`${baseURL}api/profile/`, {
             method: "POST",
             headers: {
               "X-CSRFToken": getCsrfToken(),

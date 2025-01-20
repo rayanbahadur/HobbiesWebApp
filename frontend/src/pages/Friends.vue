@@ -85,7 +85,7 @@
       // Fetch friends
       const fetchFriends = async () => {
         try {
-          const response = await fetch("/friends/");
+          const response = await fetch("api/friends/");
           if (!response.ok) throw new Error("Failed to fetch friends");
           friends.value = await response.json();
         } catch (error) {
@@ -100,7 +100,7 @@
       // Fetch friend requests
       const fetchFriendRequests = async () => {
         try {
-          const response = await fetch("/friend-requests/");
+          const response = await fetch("api/friend-requests/");
           if (!response.ok) throw new Error("Failed to fetch friend requests");
           const data = await response.json();
           console.log("Friend Requests:", data); // Debug log
@@ -118,7 +118,7 @@
       const searchFriends = async () => {
         try {
           searchClicked.value = true;
-          const response = await fetch(`/search/?q=${encodeURIComponent(searchQuery.value)}`);
+          const response = await fetch(`api/search/?q=${encodeURIComponent(searchQuery.value)}`);
           if (!response.ok) throw new Error("Failed to search users");
           searchResults.value = await response.json();
         } catch (error) {
@@ -138,7 +138,7 @@
       const sendFriendRequest = async (userId: number) => {
         try {
           const csrfToken = getCSRFToken();
-          const response = await fetch("/friend-requests/send/", {
+          const response = await fetch("api/friend-requests/send/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -178,7 +178,7 @@
       const acceptRequest = async (requestId: number) => {
         try {
           const csrfToken = getCSRFToken();
-          const response = await fetch("/friend-requests/accept/", {
+          const response = await fetch("api/friend-requests/accept/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -214,7 +214,7 @@
       const rejectRequest = async (requestId: number) => {
         try {
           const csrfToken = getCSRFToken();
-          const response = await fetch("/friend-requests/reject/", {
+          const response = await fetch("api/friend-requests/reject/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
