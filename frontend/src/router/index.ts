@@ -35,6 +35,7 @@ const router = createRouter({
       name: "Profile Page",
       component: ProfilePage,
       beforeEnter: () => {
+        console.log('Fetching profile data before entering the route');
         const userStore = useUserStoreProfile();
         return userStore.fetchProfile(); // Ensure profile is fetched before entering the route
       },

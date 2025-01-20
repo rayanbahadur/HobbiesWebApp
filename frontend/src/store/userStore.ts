@@ -30,7 +30,7 @@ export const useUserStore = defineStore('userStore', {
       });
 
       console.log('Fetching users with params:', params.toString()); // Debugging log
-      const response = await fetch(`/api/similar/?${params.toString()}`);
+      const response = await fetch(`/similar/?${params.toString()}`);
       console.log('Response:', response); // Debugging log
       if (response.redirected && response.url.includes("/login")) {
         window.location.href = "/login";
@@ -60,7 +60,7 @@ export const useUserStoreProfile = defineStore('userStoreProfile', {
   }),
   actions: {
     async fetchProfile() {
-      const response = await fetch('/api/profile/');
+      const response = await fetch('/profile/');
       console.log('Response:', response); // Debugging log
       if (response.redirected && response.url.includes("/login")) {
         window.location.href = "/login";
@@ -71,7 +71,7 @@ export const useUserStoreProfile = defineStore('userStoreProfile', {
       this.user = data;
     },
     async updateProfile(updatedUser: User) {
-      const response = await fetch('/api/profile/', {
+      const response = await fetch('/profile/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
