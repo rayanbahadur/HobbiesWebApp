@@ -86,6 +86,10 @@
       const fetchFriends = async () => {
         try {
           const response = await fetch("/friends/");
+          if (response.redirected && response.url.includes("/login")) {
+            window.location.href = "/login";
+          return;
+          }
           if (!response.ok) throw new Error("Failed to fetch friends");
           friends.value = await response.json();
         } catch (error) {
