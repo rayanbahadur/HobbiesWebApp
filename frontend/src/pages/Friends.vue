@@ -43,8 +43,8 @@
           <li class="list-group-item d-flex justify-content-between align-items-center" v-for="request in friendRequests" :key="request.id">
             {{ request.from_user.name || 'Unknown' }} sent a request
             <div class="btn-group" role="group" aria-label="Friend Request Actions">
-              <button class="btn btn-primary" @click="acceptRequest(request.id)">Accept</button>
-              <button class="btn btn-danger" @click="rejectRequest(request.id)">Reject</button>
+              <button class="btn btn-primary" name = "accept" @click="acceptRequest(request.id)">Accept</button>
+              <button class="btn btn-danger" name = "reject" @click="rejectRequest(request.id)">Reject</button>
             </div>
           </li>
         </ul>
