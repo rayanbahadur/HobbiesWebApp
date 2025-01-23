@@ -19,6 +19,8 @@ from django.urls import include, path, re_path
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from . import views
+from django.views.generic import TemplateView
+
 
 from .views import main_spa, search_users
 
@@ -40,5 +42,8 @@ urlpatterns = [
     # Friends and Search URLs
     path('friends/', views.list_friends, name='list_friends'),
     path('search/', search_users, name='search_users'),
+
+    # Catch-all route for Vue Router
+    re_path(r'^.*$', TemplateView.as_view(template_name='api/spa/index.html')),
 
 ]
