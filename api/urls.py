@@ -26,6 +26,7 @@ from .views import main_spa, search_users
 
 ## TODO, any access to pages after login should be protected by login_required
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
