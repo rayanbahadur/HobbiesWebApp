@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
 interface Hobby {
   id: number;
@@ -12,8 +12,7 @@ interface User {
   hobbies: Hobby[];
 }
 
-
-export const useUserStore = defineStore('userStore', {
+export const useUserStore = defineStore("userStore", {
   state: () => ({
     users: [],
     page: 1,
@@ -24,20 +23,20 @@ export const useUserStore = defineStore('userStore', {
   actions: {
     async fetchUsers() {
       const params = new URLSearchParams({
-        age_min: this.ageMin?.toString() || '',
-        age_max: this.ageMax?.toString() || '',
+        age_min: this.ageMin?.toString() || "",
+        age_max: this.ageMax?.toString() || "",
         page: this.page.toString(),
       });
 
-      console.log('Fetching users with params:', params.toString()); // Debugging log
+      console.log("Fetching users with params:", params.toString()); // Debugging log
       const response = await fetch(`/similar/?${params.toString()}`);
-      console.log('Response:', response); // Debugging log
+      console.log("Response:", response); // Debugging log
       if (response.redirected && response.url.includes("/login")) {
-        window.location.href = "/login";
+        window.location.href = "/login/";
         return;
       }
       const data = await response.json();
-      console.log('Fetched users:', data); // Debugging log
+      console.log("Fetched users:", data); // Debugging log
       this.users = data.users;
       this.numPages = data.num_pages;
     },
@@ -54,33 +53,33 @@ export const useUserStore = defineStore('userStore', {
   },
 });
 
-export const useUserStoreProfile = defineStore('userStoreProfile', {
+export const useUserStoreProfile = defineStore("userStoreProfile", {
   state: () => ({
     user: null as User | null,
   }),
   actions: {
     async fetchProfile() {
-      const response = await fetch('/profile/');
-      console.log('Response:', response); // Debugging log
+      const response = await fetch("/profile/");
+      console.log("Response:", response); // Debugging log
       if (response.redirected && response.url.includes("/login")) {
-        window.location.href = "/login";
+        window.location.href = "/login/";
         return;
       }
       const data: User = await response.json();
-      console.log('Fetched user profile:', data);
+      console.log("Fetched user profile:", data);
       this.user = data;
     },
     async updateProfile(updatedUser: User) {
-      const response = await fetch('/profile/', {
-        method: 'POST',
+      const response = await fetch("/profile/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedUser),
       });
-      console.log('Response:', response); // Debugging log
+      console.log("Response:", response); // Debugging log
       if (response.redirected && response.url.includes("/login")) {
-        window.location.href = "/login";
+        window.location.href = "/login/";
         return;
       }
       if (response.ok) {
