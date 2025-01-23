@@ -26,15 +26,16 @@ const router = createRouter({
       },
     },
     {
-      path: "/friends/",
+      path: "/friends-page/",
       name: "Friends Page",
       component: FriendsPage, // Navigate to FriendsPage component
     },
     { 
-      path: "/profile/", 
+      path: "/profile-page/", 
       name: "Profile Page",
       component: ProfilePage,
       beforeEnter: () => {
+        console.log('Fetching profile data before entering the route');
         const userStore = useUserStoreProfile();
         return userStore.fetchProfile(); // Ensure profile is fetched before entering the route
       },
