@@ -10,16 +10,17 @@
           v-model="searchQuery"
           placeholder="Search by username"
           @keyup.enter="searchFriends"
+          name="search"
         />
       </div>
       <div class="col-sm-1">
-        <button class="btn btn-primary w-100" @click="searchFriends">Search</button>
+        <button type="submit" class="btn btn-primary w-100" @click="searchFriends">Search</button>
       </div>
     </div>
     <ul class="list-group mb-3" v-if="searchResults.length">
       <li class="list-group-item d-flex justify-content-between align-items-center" v-for="user in searchResults" :key="user.id">
         {{ user.username }}
-        <button class="btn btn-secondary" @click="sendFriendRequest(user.id)">Send Friend Request</button>
+        <button name="request" class="btn btn-secondary" @click="sendFriendRequest(user.id)">Send Friend Request</button>
       </li>
     </ul>
     <p v-else-if="searchClicked" class="alert alert-warning">No results found.</p>
@@ -42,8 +43,8 @@
           <li class="list-group-item d-flex justify-content-between align-items-center" v-for="request in friendRequests" :key="request.id">
             {{ request.from_user.name || 'Unknown' }} sent a request
             <div class="btn-group" role="group" aria-label="Friend Request Actions">
-              <button class="btn btn-primary" @click="acceptRequest(request.id)">Accept</button>
-              <button class="btn btn-danger" @click="rejectRequest(request.id)">Reject</button>
+              <button class="btn btn-primary" name = "accept" @click="acceptRequest(request.id)">Accept</button>
+              <button class="btn btn-danger" name = "reject" @click="rejectRequest(request.id)">Reject</button>
             </div>
           </li>
         </ul>
@@ -157,6 +158,8 @@
               const errorJson = JSON.parse(errorText);
               if (errorJson.error === "You are already friends") {
                 alert("You are already friends with this user.");
+              } else if (errorJson.error === "Friend request already sent") {
+                alert("Friend request already sent.");
               } else {
                 throw new Error(errorJson.error || "Failed to send friend request");
               }
@@ -167,13 +170,12 @@
             alert("Friend request sent!");
           }
         } catch (error) {
+          let errorMessage = "An unexpected error occurred";
           if (error instanceof Error) {
-            console.error(error.message);
-            alert(error.message);
-          } else {
-            console.error(String(error));
-            alert("An unexpected error occurred.");
-          }          
+            errorMessage = error.message;
+          }
+          console.error(errorMessage);
+          alert(errorMessage);
         }
       };
 
