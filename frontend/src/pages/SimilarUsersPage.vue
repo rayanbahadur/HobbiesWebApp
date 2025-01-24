@@ -11,7 +11,7 @@
         <input type="number" id="ageMax" v-model="ageMax" class="form-control" />
       </div>
       <div class="col mb-3">
-        <button @click="applyFilters" class="btn btn-primary w-30">Filter</button>
+        <button  type="submit" @click="applyFilters" class="btn btn-primary w-30">Filter</button>
       </div>
     </div>
     <ul class="list-group">
