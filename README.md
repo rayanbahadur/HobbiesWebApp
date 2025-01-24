@@ -1,59 +1,84 @@
-# Template for ECS639U Group Coursework
+# Hobbies Web App - README
 
-This template should be used as the starting point for your group coursework in the module ECS639U Web Programming (at Queen Mary University of London). Use Git (github.qmul.ac.uk) to collaborate on the coursework with your group members. Module leader: Paulo Oliva <[p.oliva@qmul.ac.uk](mailto:p.oliva@qmul.ac.uk)>
+## Team Members and Contributions
 
-## Local development
+### Rayan
+- **Assigned Task:** User authentication and account creation (signup, login, logout) using Django's authentication framework, custom User model, and Django templates.
+- **Contribution:** Implemented account creation and login/logout functionality, designed the custom User model with additional fields (name, email, date of birth, hobbies), and integrated server-side rendering for templates.
 
-To run this project in your development machine, follow these steps:
+### Ahmad
+- **Assigned Task:** Develop the "similar users" feature with hobby matching, filtering by age, and pagination.
+- **Contribution:** Created a page displaying users with the most similar hobbies in descending order, implemented AJAX-based filtering and pagination to fetch only necessary user data dynamically.
 
-1. Create and activate a conda environment
+### Abdullah
+- **Assigned Task:** User profile management, allowing users to edit profile data and hobbies.
+- **Contribution:** Developed the profile page, enabling users to update their name, email, date of birth, hobbies, and password.
 
-2. Download this repo as a zip and add the files to your own private repo.
+### Rahul
+- **Assigned Task:** Implement a friend request system with AJAX functionality.
+- **Contribution:** Designed and implemented the friend request feature, including sending requests, approving requests, and establishing friendships between users.
 
-3. Install Pyhton dependencies (main folder):
+### Rahul and Abdullah
+- **Assigned Task:** Automated testing of core features.
+- **Contribution:** Developed Selenium-based end-to-end (E2E) tests covering account creation, login, profile editing, user page filtering, sending and accepting friend requests.
 
-    ```console
-    $ pip install -r requirements.txt
-    ```
+---
 
-4. Create a development database:
+## Deployed Application
+- **URL:** https://group-25-web-apps-ec22431.apps.a.comp-teach.qmul.ac.uk/
 
-    ```console
-    $ python manage.py migrate
-    ```
+---
 
-5. Install JavaScript dependencies (from 'frontend' folder):
+## Admin User Credentials
+- **Username:** admin@hobbies.com
+- **Password:** #Pass123#
 
-    ```console
-    $ npm install
-    ```
+---
 
-6. If everything is alright, you should be able to start the Django development server from the main folder:
+## Test User Credentials
+Here are the credentials for 5 test users:
 
-    ```console
-    $ python manage.py runserver
-    ```
+1. **Username:** alice.smith@hobbies.com  
+   **Password:** #Pass123#
 
-7. and the Vue server from the 'frontend' sub-folder:
+2. **Username:** bob.johnson@hobbies.com  
+   **Password:** #Pass123#
 
-    ```console
-    $ npm run dev
-    ```
+3. **Username:** carol.davis@hobbies.com  
+   **Password:** #Pass123#
 
-8. Open your browser and go to http://localhost:5173, you will be greeted with a template page.
+4. **Username:** david.martinez@hobbies.com  
+   **Password:** #Pass123#
 
-## OpenShift deployment
+5. **Username:** emily.brown@hobbies.com  
+   **Password:** #Pass123#
 
-Once your project is ready to be deployed you will need to 'build' the Vue app and place it in Django's static folder.
+---
 
-1. The build command in package.json and the vite.config.ts files have already been modified so that when running 'npm run build' the generated JavaScript and CSS files will be placed in the mainapp static folder, and the index.html file will be placed in the templates folder:
+## Features Summary
 
-    ```console
-    $ npm run build
-    ```
+### Rayan
+- Account creation and authentication using Django's custom User model and templates.
+- Hobbies are database-driven, allowing users to add new hobbies dynamically.
 
-2. You should then follow the instruction on QM+ on how to deploy your app on EECS's OpenShift live server.
+### Ahmad
+- Similar users feature displaying users with the most shared hobbies.
+- AJAX-based filtering by age and pagination for efficient data fetching.
 
-## License
+### Abdullah
+- Profile management: Users can edit their details and hobbies on a dedicated profile page.
+- Automated E2E testing using Selenium for core features.
 
-This code is dedicated to the public domain to the maximum extent permitted by applicable law, pursuant to [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
+### Rahul
+- Friend request system with AJAX-based request sending and approval.
+- Automated E2E testing using Selenium for core features.
+
+### Automated Testing
+The following features are covered by automated Selenium tests:
+1. Account creation/signup.
+2. Login functionality.
+3. Editing user profile data (name, email, DOB, hobbies, password).
+4. Viewing and filtering users by age.
+5. Sending a friend request.
+6. Logging in as another user and accepting the friend request.
+
